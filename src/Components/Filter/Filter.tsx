@@ -15,6 +15,8 @@ import Slider from '@mui/material/Slider';
 
 import getCategories from '../../Services/api/categories.tsx';
 
+import './Filter.scss'
+
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 const anchor: Anchor = 'left';
 
