@@ -4,10 +4,8 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import Checkbox from '@mui/material/Checkbox';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
@@ -15,7 +13,7 @@ import Slider from '@mui/material/Slider';
 
 import getCategories from '../../Services/api/categories.tsx';
 
-import './Filter.scss'
+import './Filter.scss';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 const anchor: Anchor = 'left';
@@ -52,9 +50,11 @@ const brands = [
 
 export default function TemporaryDrawer() {
   const [categories, setCategories] = React.useState<string[]>([]);
-  const [open, setOpen] = React.useState(false);
+  const [openPrice, setOpenPrice] = React.useState(false);
+  const [openPriceRange, setOpenPriceRange] = React.useState(false);
+  const [openCategory, setOpenCategory] = React.useState(false);
+  const [openBrand, setOpenBrand] = React.useState(false);
   const [value, setValue] = React.useState<number[]>([20, 37]);
-  const [priceRangeOpen, setPriceRangeOpen] = React.useState(false);
   const [priceSort, setPriceSort] = React.useState<'descent' | 'ascent'>('descent');
 
   const fetchCategories = async () => {
@@ -70,12 +70,20 @@ export default function TemporaryDrawer() {
     fetchCategories();
   }, []);
 
-  const handleToggle = () => {
-    setOpen(!open);
+  const handlePriceToggle = () => {
+    setOpenPrice(!openPrice);
   };
 
   const handlePriceRangeToggle = () => {
-    setPriceRangeOpen(!priceRangeOpen);
+    setOpenPriceRange(!openPriceRange);
+  };
+
+  const handleCategoryToggle = () => {
+    setOpenCategory(!openCategory);
+  };
+
+  const handleBrandToggle = () => {
+    setOpenBrand(!openBrand);
   };
 
   const handlePriceSort = () => {
@@ -91,96 +99,104 @@ export default function TemporaryDrawer() {
       <Box
         sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
         role="presentation"
+        className="filter-sidebar"
       >
         <List>
-          {['Price', 'Price range', 'Category', 'Brand'].map((text, index) => (
-            <React.Fragment key={text}>
-              {index === 0 ? (
-                <React.Fragment>
-                  <ListItem disablePadding button onClick={handleToggle}>
-                    <ListItemIcon>
-                      {open ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItem>
-                  <Collapse in={open} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      <ListItem disablePadding button onClick={handlePriceSort}>
-                        <ListItemIcon>
-                          {priceSort === 'descent' ? <InboxIcon /> : <MailIcon />}
-                        </ListItemIcon>
-                        <ListItemText primary={priceSort === 'descent' ? 'Sort by Price (Descent)' : 'Sort by Price (Ascent)'} />
-                      </ListItem>
-                    </List>
-                  </Collapse>
-                </React.Fragment>
-              ) : index === 1 ? (
-                <React.Fragment>
-                  <ListItem disablePadding button onClick={handlePriceRangeToggle}>
-                    <ListItemIcon>
-                      {priceRangeOpen ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItem>
-                  <Collapse in={priceRangeOpen} timeout="auto" unmountOnExit>
-                    <Slider
-                      getAriaLabel={() => 'Temperature range'}
-                      value={value}
-                      onChange={handleChange}
-                      valueLabelDisplay="auto"
-                      getAriaValueText={(value) => `${value}`}
-                    />
-                  </Collapse>
-                </React.Fragment>
-              ) : index === 2 ? (
-                <React.Fragment>
-                  <ListItem disablePadding button onClick={handleToggle}>
-                    <ListItemIcon>
-                      {open ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItem>
-                  <Collapse in={open} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {categories.map((category) => (
-                        <ListItem key={category} disablePadding>
-                          <ListItemText primary={category} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                </React.Fragment>
-              ) : index === 3 ? (
-                <React.Fragment>
-                  <ListItem disablePadding button onClick={handleToggle}>
-                    <ListItemIcon>
-                      {open ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItem>
-                  <Collapse in={open} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {brands.map((brand) => (
-                        <ListItem key={brand} disablePadding>
-                          <ListItemText primary={brand} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                </React.Fragment>
-              ) : (
+          <React.Fragment>
+            <ListItem disablePadding>
+              <ListItemButton
+                selected={openPrice}
+                onClick={handlePriceToggle}
+              >
+                <ListItemText primary="Price" />
+                {openPrice ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openPrice} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
                 <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
+                  <ListItemButton onClick={handlePriceSort}>
+                    <ListItemText primary={priceSort === 'descent' ? 'Sort by Price (Descent)' : 'Sort by Price (Ascent)'} />
                   </ListItemButton>
                 </ListItem>
-              )}
-              {index < 3 && <Divider />}
-            </React.Fragment>
-          ))}
+              </List>
+            </Collapse>
+          </React.Fragment>
+          <Divider />
+          <React.Fragment>
+            <ListItem disablePadding>
+              <ListItemButton
+                selected={openPriceRange}
+                onClick={handlePriceRangeToggle}
+              >
+                <ListItemText primary="Price range" />
+                {openPriceRange ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openPriceRange} timeout="auto" unmountOnExit>
+              <Slider
+                getAriaLabel={() => 'Temperature range'}
+                value={value}
+                onChange={handleChange}
+                valueLabelDisplay="auto"
+                getAriaValueText={(value) => `${value}`}
+                max={1000} min={0}
+              />
+            </Collapse>
+          </React.Fragment>
+          <Divider />
+          <React.Fragment>
+            <ListItem disablePadding>
+              <ListItemButton
+                selected={openCategory}
+                onClick={handleCategoryToggle}
+              >
+                <ListItemText primary="Category" />
+                {openCategory ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openCategory} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {categories.map((category) => (
+                  <ListItem key={category} disablePadding>
+                    <Checkbox
+                      checked={false}
+                      onChange={() => console.log("test")}
+                      color="primary"
+                    />
+                    <ListItemText primary={category} />
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
+          </React.Fragment>
+          <Divider />
+          <React.Fragment>
+            <ListItem disablePadding>
+              <ListItemButton
+                selected={openBrand}
+                onClick={handleBrandToggle}
+              >
+                <ListItemText primary="Brand" />
+                {openBrand ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openBrand} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {brands.map((brand) => (
+                  <ListItem key={brand} disablePadding>
+                    <Checkbox
+                      checked={false}
+                      onChange={() => console.log("test")}
+                      color="primary"
+                    />
+                    <ListItemText primary={brand} />
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
+          </React.Fragment>
+          <Divider />
         </List>
       </Box>
     </div>
