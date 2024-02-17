@@ -5,6 +5,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
+import './Header.scss'
+
 export default function Header() {
   return (
     <Box sx={{ flexGrow: 1 }}>
