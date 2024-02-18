@@ -1,4 +1,4 @@
-import { SET_PRODUCTS, FILTER_PRODUCTS, SET_SORT_FILTER, SET_RANGE_FILTER } from '../Constants/actionTypes.tsx';
+import { SET_PRODUCTS, FILTER_PRODUCTS, SET_SORT_FILTER, SET_RANGE_FILTER, SET_CATEGORIES_FILTER } from '../Constants/actionTypes.tsx';
 
 const initialState = {
   products: [],
@@ -29,6 +29,11 @@ const productReducer = (state = initialState, action: any) => {
       return {
         ...state,
         rangeFilter: action.payload,
+      };
+    case SET_CATEGORIES_FILTER:
+      return {
+        ...state,
+        categoriesFilter: action.payload,
       };
     default:
       return state;

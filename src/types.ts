@@ -10,9 +10,8 @@ export interface Product {
     PRICE_ASC = 'price_asc',
     PRICE_DESC = 'price_desc',
   }
-  
+
   export interface RangeOption {
     min: number;
     max: number;
   }
-  

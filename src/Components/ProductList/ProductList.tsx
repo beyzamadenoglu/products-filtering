@@ -19,49 +19,58 @@ const ProductList: React.FC = () => {
 
   const { filteredProducts }: { filteredProducts: any } = useSelector((state: any) => state.products);
 
-  console.log(filteredProducts, );
-
   const { sortFilter }: { sortFilter: any } = useSelector((state: any) => state.products);
   const { rangeFilter }: { rangeFilter: any } = useSelector((state: any) => state.products);
+  const { categoriesFilter }: { categoriesFilter: any } = useSelector((state: any) => state.products); 
+
   const dispatch = useDispatch();
 
   const filterProductsList = () => {
-    console.log(sortFilter);
     if (!Array.isArray(filteredProducts)) {
-      console.error('products.products is not an array');
+      console.error('filteredProducts is not an array');
       return;
     }
-    let prods = filteredProducts;
+    let prods = [...filteredProducts];
     if (sortFilter === 'price_asc') {
-      console.log("here");
       prods.sort((a: Product, b: Product) => parseFloat(a.price) - parseFloat(b.price));
     } else if (sortFilter === 'price_desc') {
-      console.log("here no");
       prods.sort((a: Product, b: Product) => parseFloat(b.price) - parseFloat(a.price));
     }
-    console.log(filteredProducts, "prodss");
-    dispatch(filterProducts(filteredProducts));
-  };
-
-  const filterRangeProductsList = () => {
-    if (!Array.isArray(filteredProducts)) {
-      console.error('products.products is not an array');
-      return;
+    // Apply category filter
+    if (Array.isArray(categoriesFilter) && categoriesFilter.length > 0) {
+      prods = prods.filter((product: Product) =>
+        categoriesFilter.includes(product.category)
+      );
     }
+    dispatch(filterProducts(prods));
+  };
   
+  const filterRangeProductsList = () => {
     const [minPrice, maxPrice] = rangeFilter;
-  
-    let prods = filteredProducts;
-  
+    let prods = [...filteredProducts];
     if (minPrice !== null && maxPrice !== null) {
       prods = prods.filter((product: Product) => {
         const price = parseFloat(product.price);
         return price >= minPrice && price <= maxPrice;
       });
     }
-  
+    // Apply category filter
+    if (Array.isArray(categoriesFilter) && categoriesFilter.length > 0) {
+      prods = prods.filter((product: Product) =>
+        categoriesFilter.includes(product.category)
+      );
+    }
     dispatch(filterProducts(prods));
   };
+  
+  useEffect(() => {
+    filterProductsList();
+  }, [sortFilter, categoriesFilter]);
+  
+  useEffect(() => {
+    filterRangeProductsList();
+  }, [rangeFilter, categoriesFilter]);
+  
   
   
 
@@ -71,13 +80,8 @@ const ProductList: React.FC = () => {
 
 
   useEffect(() => {
-    console.log("work?")
     filterRangeProductsList();
   },[rangeFilter]);
-
-  useEffect(() => {
-   console.log(filteredProducts, "importantre")
-  },[filteredProducts])
 
 
   return (

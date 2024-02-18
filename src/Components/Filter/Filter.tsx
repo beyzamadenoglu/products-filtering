@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
@@ -10,12 +11,10 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import Slider from '@mui/material/Slider';
-import { useDispatch, useSelector } from 'react-redux';
 
 import getCategories from '../../Services/api/categories.tsx';
-import { SortOption, RangeOption } from '../../types.ts'; 
-import { setSortFilter } from '../../Actions/productActions.tsx';
-import { setRangeFilter } from '../../Actions/productActions.tsx';
+import { SortOption, RangeOption } from '../../types.ts';
+import { setSortFilter, setRangeFilter, setCategoriesFilter} from '../../Actions/productActions.tsx';
 
 import { Product } from '../../types.ts';
 
@@ -29,16 +28,16 @@ interface FilterProps {
 }
 
 const TemporaryDrawer: React.FC<FilterProps> = () => {
-  const [categories, setCategories] = React.useState<string[]>([]);
-  const [openPrice, setOpenPrice] = React.useState(false);
-  const [openPriceRange, setOpenPriceRange] = React.useState(false);
-  const [openCategory, setOpenCategory] = React.useState(false);
-  const [openBrand, setOpenBrand] = React.useState(false);
-  const [value, setValue] = React.useState<number[]>([20, 37]);
-  const [priceSort, setPriceSort] = React.useState<SortOption>();
+  const [categories, setCategories] = useState<string[]>([]);
+  const [openPrice, setOpenPrice] = useState(false);
+  const [openPriceRange, setOpenPriceRange] = useState(false);
+  const [openCategory, setOpenCategory] = useState(false);
+  const [openBrand, setOpenBrand] = useState(false);
+  const [value, setValue] = useState<number[]>([20, 37]);
+  const [priceSort, setPriceSort] = useState<SortOption>();
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const { products }: { products: any } = useSelector((state: any) => state.products);
-  
   const dispatch = useDispatch();
 
   const brands = Array.from(new Set(products?.products?.map((product: Product) => product.brand)));
@@ -52,34 +51,42 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchCategories();
   }, []);
 
   const handlePriceToggle = () => {
-    setOpenPrice(prevOpenPrice => !prevOpenPrice);
+    setOpenPrice((prevOpenPrice) => !prevOpenPrice);
   };
-  
+
   const handlePriceRangeToggle = () => {
-    setOpenPriceRange(prevOpenPriceRange => !prevOpenPriceRange);
+    setOpenPriceRange((prevOpenPriceRange) => !prevOpenPriceRange);
   };
-  
+
   const handleCategoryToggle = () => {
-    setOpenCategory(prevOpenCategory => !prevOpenCategory);
+    setOpenCategory((prevOpenCategory) => !prevOpenCategory);
   };
-  
+
   const handleBrandToggle = () => {
-    setOpenBrand(prevOpenBrand => !prevOpenBrand);
+    setOpenBrand((prevOpenBrand) => !prevOpenBrand);
   };
-  
+
   const handlePriceSort = (sortOption: SortOption) => {
     setPriceSort(sortOption);
     dispatch(setSortFilter(sortOption));
   };
-  
+
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValue(newValue as number[]);
     dispatch(setRangeFilter(newValue as RangeOption));
+  };
+
+  const handleCategoryChange = (category: string) => {
+    const updatedSelectedCategories = selectedCategories.includes(category)
+      ? selectedCategories.filter((c) => c !== category)
+      : [...selectedCategories, category];
+      dispatch(setCategoriesFilter(updatedSelectedCategories));
+      setSelectedCategories(updatedSelectedCategories);
   };
 
   return (
@@ -93,18 +100,14 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
           {/* Price */}
           <React.Fragment>
             <ListItem disablePadding>
-              <ListItemButton
-                selected={openPrice}
-                onClick={handlePriceToggle}
-              >
+              <ListItemButton selected={openPrice} onClick={handlePriceToggle}>
                 <ListItemText primary="Price" />
                 {openPrice ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
             </ListItem>
             <Collapse in={openPrice} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItem disablePadding>
-                </ListItem>
+                <ListItem disablePadding></ListItem>
                 <ListItem disablePadding>
                   <Checkbox
                     checked={priceSort === SortOption.PRICE_ASC}
@@ -126,10 +129,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
           {/* Price Range */}
           <React.Fragment>
             <ListItem disablePadding>
-              <ListItemButton
-                selected={openPriceRange}
-                onClick={handlePriceRangeToggle}
-              >
+              <ListItemButton selected={openPriceRange} onClick={handlePriceRangeToggle}>
                 <ListItemText primary="Price range" />
                 {openPriceRange ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
@@ -141,7 +141,8 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
                 onChange={handleChange}
                 valueLabelDisplay="auto"
                 getAriaValueText={(value) => `${value}`}
-                max={1000} min={0}
+                max={1000}
+                min={0}
               />
             </Collapse>
           </React.Fragment>
@@ -149,10 +150,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
           {/* Category */}
           <React.Fragment>
             <ListItem disablePadding>
-              <ListItemButton
-                selected={openCategory}
-                onClick={handleCategoryToggle}
-              >
+              <ListItemButton selected={openCategory} onClick={handleCategoryToggle}>
                 <ListItemText primary="Category" />
                 {openCategory ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
@@ -162,8 +160,8 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
                 {categories.map((category) => (
                   <ListItem key={category} disablePadding>
                     <Checkbox
-                      checked={false}
-                      onChange={() => console.log("test")}
+                      checked={selectedCategories.includes(category)}
+                      onChange={() => handleCategoryChange(category)}
                       color="primary"
                     />
                     <ListItemText primary={category} />
@@ -176,10 +174,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
           {/* Brand */}
           <React.Fragment>
             <ListItem disablePadding>
-              <ListItemButton
-                selected={openBrand}
-                onClick={handleBrandToggle}
-              >
+              <ListItemButton selected={openBrand} onClick={handleBrandToggle}>
                 <ListItemText primary="Brand" />
                 {openBrand ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
@@ -190,7 +185,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
                   <ListItem key={brand} disablePadding>
                     <Checkbox
                       checked={false}
-                      onChange={() => console.log("test")}
+                      onChange={() => console.log('test')}
                       color="primary"
                     />
                     <ListItemText primary={brand} />
@@ -204,6 +199,6 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
       </Box>
     </div>
   );
-}
+};
 
 export default TemporaryDrawer;
