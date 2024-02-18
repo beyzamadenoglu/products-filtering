@@ -1,9 +1,10 @@
-import { SET_PRODUCTS, FILTER_PRODUCTS, SET_SORT_FILTER } from '../Constants/actionTypes.tsx';
+import { SET_PRODUCTS, FILTER_PRODUCTS, SET_SORT_FILTER, SET_RANGE_FILTER } from '../Constants/actionTypes.tsx';
 
 const initialState = {
   products: [],
   filteredProducts: [],
-  sortFilter: ''
+  sortFilter: '',
+  rangeFilter: [0,2000]
 };
 
 const productReducer = (state = initialState, action: any) => {
@@ -12,7 +13,7 @@ const productReducer = (state = initialState, action: any) => {
       return {
         ...state,
         products: action.payload,
-        filteredProducts: action.payload,
+        filteredProducts: action.payload.products,
       };
     case FILTER_PRODUCTS:
       return {
@@ -23,6 +24,11 @@ const productReducer = (state = initialState, action: any) => {
       return {
         ...state,
         sortFilter: action.payload,
+      };
+    case SET_RANGE_FILTER:
+      return {
+        ...state,
+        rangeFilter: action.payload,
       };
     default:
       return state;

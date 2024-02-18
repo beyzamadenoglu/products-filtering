@@ -13,8 +13,10 @@ import Slider from '@mui/material/Slider';
 import { useDispatch, useSelector } from 'react-redux';
 
 import getCategories from '../../Services/api/categories.tsx';
-import { SortOption } from '../../types.ts'; 
+import { SortOption, RangeOption } from '../../types.ts'; 
 import { setSortFilter } from '../../Actions/productActions.tsx';
+import { setRangeFilter } from '../../Actions/productActions.tsx';
+
 import { Product } from '../../types.ts';
 
 import './Filter.scss';
@@ -33,7 +35,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
   const [openCategory, setOpenCategory] = React.useState(false);
   const [openBrand, setOpenBrand] = React.useState(false);
   const [value, setValue] = React.useState<number[]>([20, 37]);
-  const [priceSort, setPriceSort] = React.useState<SortOption>("");
+  const [priceSort, setPriceSort] = React.useState<SortOption>();
 
   const { products }: { products: any } = useSelector((state: any) => state.products);
   
@@ -55,21 +57,21 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
   }, []);
 
   const handlePriceToggle = () => {
-    setOpenPrice(!openPrice);
+    setOpenPrice(prevOpenPrice => !prevOpenPrice);
   };
-
+  
   const handlePriceRangeToggle = () => {
-    setOpenPriceRange(!openPriceRange);
+    setOpenPriceRange(prevOpenPriceRange => !prevOpenPriceRange);
   };
-
+  
   const handleCategoryToggle = () => {
-    setOpenCategory(!openCategory);
+    setOpenCategory(prevOpenCategory => !prevOpenCategory);
   };
-
+  
   const handleBrandToggle = () => {
-    setOpenBrand(!openBrand);
+    setOpenBrand(prevOpenBrand => !prevOpenBrand);
   };
-
+  
   const handlePriceSort = (sortOption: SortOption) => {
     setPriceSort(sortOption);
     dispatch(setSortFilter(sortOption));
@@ -77,6 +79,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
   
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValue(newValue as number[]);
+    dispatch(setRangeFilter(newValue as RangeOption));
   };
 
   return (
@@ -101,7 +104,6 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
             <Collapse in={openPrice} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItem disablePadding>
-                  <ListItemText primary="Sort by Price" />
                 </ListItem>
                 <ListItem disablePadding>
                   <Checkbox
