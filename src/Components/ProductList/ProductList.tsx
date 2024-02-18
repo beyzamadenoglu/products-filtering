@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ProductCard from '../Product/ProductCard.tsx';
 import './ProductList.scss';
 import CustomSearch from '../Search/CustomSearch.tsx'
-import { filterProducts } from '../../Actions/productActions.tsx';
+import { filterProducts, clearFilters } from '../../Actions/productActions.tsx';
 
 interface Product {
   id: number;
@@ -24,6 +24,8 @@ const ProductList: React.FC = () => {
   const { rangeFilter }: { rangeFilter: any } = useSelector((state: any) => state.products);
   const { categoriesFilter }: { categoriesFilter: any } = useSelector((state: any) => state.products);
   const { brandsFilter }: { brandsFilter: any } = useSelector((state: any) => state.products);
+  const { searchTerm }: { searchTerm: string } = useSelector((state: any) => state.products);
+
 
   const dispatch = useDispatch();
 
@@ -39,19 +41,29 @@ const ProductList: React.FC = () => {
   
   const applyFilters = () => {
     if (!products || products.length === 0) return;
+    
     let prods = [...products.products];
+  
+    // Apply search term filter first
+    if (searchTerm.trim() !== '') {
+      prods = prods.filter((product: Product) =>
+        product.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+  
+    // Apply other filters
     if (Array.isArray(categoriesFilter) && categoriesFilter.length > 0) {
       prods = prods.filter((product: Product) =>
         categoriesFilter.includes(product.category)
       );
     }
-
+  
     if (Array.isArray(brandsFilter) && brandsFilter.length > 0) {
       prods = prods.filter((product: Product) =>
         brandsFilter.includes(product.brand)
       );
     }
-
+  
     const [minPrice, maxPrice] = rangeFilter;
     if (minPrice !== null && maxPrice !== null) {
       prods = prods.filter((product: Product) => {
@@ -59,9 +71,10 @@ const ProductList: React.FC = () => {
         return price >= minPrice && price <= maxPrice;
       });
     }
-    
+  
     dispatch(filterProducts(prods));
   };
+  
   
   useEffect(() => {
     filterByPrice();
@@ -70,6 +83,20 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     applyFilters();
   }, [products, categoriesFilter, rangeFilter, brandsFilter]);
+
+  useEffect(() => {
+    console.log(searchTerm, "termmm")
+    if (searchTerm.trim() !== '') {
+      dispatch(clearFilters());
+      console.log(products.products, "termmmimpooo")
+      const filtered = products.products.filter((product: Product) =>
+        product.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      console.log(filtered,)
+      dispatch(filterProducts(filtered));
+    }
+  }, [searchTerm, products]);
 
   return (
     <div className="product-list">
