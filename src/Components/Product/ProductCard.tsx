@@ -31,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ image, name, price }) => {
           {name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-         {price}
+         {` $ ${price}`}
         </Typography>
       </CardContent>
       <CardActions>

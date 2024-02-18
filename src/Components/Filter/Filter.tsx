@@ -10,52 +10,36 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import Slider from '@mui/material/Slider';
+import { useDispatch, useSelector } from 'react-redux';
 
 import getCategories from '../../Services/api/categories.tsx';
+import { SortOption } from '../../types.ts'; 
+import { setSortFilter } from '../../Actions/productActions.tsx';
+import { Product } from '../../types.ts';
 
 import './Filter.scss';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 const anchor: Anchor = 'left';
 
-const brands = [
-  "Apple",
-  "Samsung",
-  "OPPO",
-  "Huawei",
-  "Microsoft Surface",
-  "Infinix",
-  "HP Pavilion",
-  "Impression of Acqua Di Gio",
-  "Royal_Mirage",
-  "Fog Scent Xpressio",
-  "Al Munakh",
-  "Lord - Al-Rehab",
-  "L'Oreal Paris",
-  "Hemani Tea",
-  "Dermive",
-  "ROREC White Rice",
-  "Fair & Clear",
-  "Saaf & Khaas",
-  "Bake Parlor Big",
-  "Baking Food Items",
-  "fauji",
-  "Dry Rose",
-  "Boho Decor",
-  "Flying Wooden",
-  "LED Lights",
-  "luxury palace",
-  "Golden"
-];
+interface FilterProps {
+  products: Product[];
+}
 
-export default function TemporaryDrawer() {
+const TemporaryDrawer: React.FC<FilterProps> = () => {
   const [categories, setCategories] = React.useState<string[]>([]);
   const [openPrice, setOpenPrice] = React.useState(false);
   const [openPriceRange, setOpenPriceRange] = React.useState(false);
   const [openCategory, setOpenCategory] = React.useState(false);
   const [openBrand, setOpenBrand] = React.useState(false);
   const [value, setValue] = React.useState<number[]>([20, 37]);
-  const [priceSort, setPriceSort] = React.useState<'descent' | 'ascent'>('descent');
+  const [priceSort, setPriceSort] = React.useState<SortOption>("");
+
+  const { products }: { products: any } = useSelector((state: any) => state.products);
+  
+  const dispatch = useDispatch();
+
+  const brands = Array.from(new Set(products?.products?.map((product: Product) => product.brand)));
 
   const fetchCategories = async () => {
     try {
@@ -86,10 +70,11 @@ export default function TemporaryDrawer() {
     setOpenBrand(!openBrand);
   };
 
-  const handlePriceSort = () => {
-    setPriceSort(priceSort === 'descent' ? 'ascent' : 'descent');
+  const handlePriceSort = (sortOption: SortOption) => {
+    setPriceSort(sortOption);
+    dispatch(setSortFilter(sortOption));
   };
-
+  
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValue(newValue as number[]);
   };
@@ -102,6 +87,7 @@ export default function TemporaryDrawer() {
         className="filter-sidebar"
       >
         <List>
+          {/* Price */}
           <React.Fragment>
             <ListItem disablePadding>
               <ListItemButton
@@ -115,14 +101,27 @@ export default function TemporaryDrawer() {
             <Collapse in={openPrice} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItem disablePadding>
-                  <ListItemButton onClick={handlePriceSort}>
-                    <ListItemText primary={priceSort === 'descent' ? 'Sort by Price (Descent)' : 'Sort by Price (Ascent)'} />
-                  </ListItemButton>
+                  <ListItemText primary="Sort by Price" />
+                </ListItem>
+                <ListItem disablePadding>
+                  <Checkbox
+                    checked={priceSort === SortOption.PRICE_ASC}
+                    onChange={() => handlePriceSort(SortOption.PRICE_ASC)}
+                  />
+                  <ListItemText primary="Ascending" />
+                </ListItem>
+                <ListItem disablePadding>
+                  <Checkbox
+                    checked={priceSort === SortOption.PRICE_DESC}
+                    onChange={() => handlePriceSort(SortOption.PRICE_DESC)}
+                  />
+                  <ListItemText primary="Descending" />
                 </ListItem>
               </List>
             </Collapse>
           </React.Fragment>
           <Divider />
+          {/* Price Range */}
           <React.Fragment>
             <ListItem disablePadding>
               <ListItemButton
@@ -145,6 +144,7 @@ export default function TemporaryDrawer() {
             </Collapse>
           </React.Fragment>
           <Divider />
+          {/* Category */}
           <React.Fragment>
             <ListItem disablePadding>
               <ListItemButton
@@ -171,6 +171,7 @@ export default function TemporaryDrawer() {
             </Collapse>
           </React.Fragment>
           <Divider />
+          {/* Brand */}
           <React.Fragment>
             <ListItem disablePadding>
               <ListItemButton
@@ -202,3 +203,5 @@ export default function TemporaryDrawer() {
     </div>
   );
 }
+
+export default TemporaryDrawer;

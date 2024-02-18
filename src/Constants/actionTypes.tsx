@@ -1,2 +1,7 @@
 export const SET_PRODUCTS = 'SET_PRODUCTS';
 export const FILTER_PRODUCTS = 'FILTER_PRODUCTS';
+export const SET_SORT_FILTER = 'SET_SORT_FILTER';
+export const SET_RANGE_FILTER =  'SET_RANGE_FILTER'
+ 
+
+
