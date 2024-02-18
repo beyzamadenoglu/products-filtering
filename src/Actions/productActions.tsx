@@ -1,5 +1,5 @@
-import { SET_PRODUCTS, FILTER_PRODUCTS, SET_SORT_FILTER, SET_RANGE_FILTER, SET_CATEGORIES_FILTER } from '../Constants/actionTypes.tsx';
-import { Product, SortOption, RangeOption, categoriesOptions} from '../types';
+import { SET_PRODUCTS, FILTER_PRODUCTS, SET_SORT_FILTER, SET_RANGE_FILTER, SET_CATEGORIES_FILTER, SET_BRANDS_FILTER} from '../Constants/actionTypes.tsx';
+import { Product, SortOption, RangeOption,} from '../types';
 
 export const setProducts = (products: Product[]) => ({
   type: SET_PRODUCTS,
@@ -25,4 +25,10 @@ export const setCategoriesFilter = (categoriesOptions: string[]) => ({
   type: SET_CATEGORIES_FILTER,
   payload: categoriesOptions,
 });
+
+export const setBrandsFilter = (brandsOptions: string[]) => ({
+  type: SET_BRANDS_FILTER,
+  payload: brandsOptions,
+});
+
 

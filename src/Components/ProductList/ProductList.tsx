@@ -11,6 +11,8 @@ interface Product {
   title: string;
   images: string[];
   price: string;
+  category: string;
+  brand: string;
 }
 
 const ProductList: React.FC = () => {
@@ -21,7 +23,8 @@ const ProductList: React.FC = () => {
 
   const { sortFilter }: { sortFilter: any } = useSelector((state: any) => state.products);
   const { rangeFilter }: { rangeFilter: any } = useSelector((state: any) => state.products);
-  const { categoriesFilter }: { categoriesFilter: any } = useSelector((state: any) => state.products); 
+  const { categoriesFilter }: { categoriesFilter: any } = useSelector((state: any) => state.products);
+  const { brandsFilter }: { brandsFilter: any } = useSelector((state: any) => state.products);
 
   const dispatch = useDispatch();
 
@@ -36,12 +39,19 @@ const ProductList: React.FC = () => {
     } else if (sortFilter === 'price_desc') {
       prods.sort((a: Product, b: Product) => parseFloat(b.price) - parseFloat(a.price));
     }
-    // Apply category filter
+    
     if (Array.isArray(categoriesFilter) && categoriesFilter.length > 0) {
       prods = prods.filter((product: Product) =>
         categoriesFilter.includes(product.category)
       );
     }
+
+    if (Array.isArray(brandsFilter) && brandsFilter.length > 0) { // Applying brand filter
+      prods = prods.filter((product: Product) =>
+        brandsFilter.includes(product.brand)
+      );
+    }
+
     dispatch(filterProducts(prods));
   };
   
@@ -60,29 +70,24 @@ const ProductList: React.FC = () => {
         categoriesFilter.includes(product.category)
       );
     }
+
+    if (Array.isArray(brandsFilter) && brandsFilter.length > 0) { // Applying brand filter
+      prods = prods.filter((product: Product) =>
+        brandsFilter.includes(product.brand)
+      );
+    }
+
     dispatch(filterProducts(prods));
   };
   
   useEffect(() => {
     filterProductsList();
-  }, [sortFilter, categoriesFilter]);
+    console.log(brandsFilter, "RKDKF")
+  }, [sortFilter, categoriesFilter, brandsFilter]);
   
   useEffect(() => {
     filterRangeProductsList();
-  }, [rangeFilter, categoriesFilter]);
-  
-  
-  
-
-  useEffect(() => {
-    filterProductsList();
-  },[sortFilter]);
-
-
-  useEffect(() => {
-    filterRangeProductsList();
-  },[rangeFilter]);
-
+  }, [rangeFilter, categoriesFilter, brandsFilter]); // Adding brandFilter to the dependency array
 
   return (
     <div className="product-list">

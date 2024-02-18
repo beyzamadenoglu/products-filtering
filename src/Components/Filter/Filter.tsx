@@ -14,7 +14,7 @@ import Slider from '@mui/material/Slider';
 
 import getCategories from '../../Services/api/categories.tsx';
 import { SortOption, RangeOption } from '../../types.ts';
-import { setSortFilter, setRangeFilter, setCategoriesFilter} from '../../Actions/productActions.tsx';
+import { setSortFilter, setRangeFilter, setCategoriesFilter, setBrandsFilter } from '../../Actions/productActions.tsx';
 
 import { Product } from '../../types.ts';
 
@@ -36,6 +36,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
   const [value, setValue] = useState<number[]>([20, 37]);
   const [priceSort, setPriceSort] = useState<SortOption>();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
 
   const { products }: { products: any } = useSelector((state: any) => state.products);
   const dispatch = useDispatch();
@@ -85,8 +86,16 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
     const updatedSelectedCategories = selectedCategories.includes(category)
       ? selectedCategories.filter((c) => c !== category)
       : [...selectedCategories, category];
-      dispatch(setCategoriesFilter(updatedSelectedCategories));
-      setSelectedCategories(updatedSelectedCategories);
+    dispatch(setCategoriesFilter(updatedSelectedCategories));
+    setSelectedCategories(updatedSelectedCategories);
+  };
+
+  const handleBrandChange = (brand: string) => {
+    const updatedSelectedBrands = selectedBrands.includes(brand)
+      ? selectedBrands.filter((b) => b !== brand)
+      : [...selectedBrands, brand];
+    dispatch(setBrandsFilter(updatedSelectedBrands));
+    setSelectedBrands(updatedSelectedBrands);
   };
 
   return (
@@ -184,8 +193,8 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
                 {brands.map((brand) => (
                   <ListItem key={brand} disablePadding>
                     <Checkbox
-                      checked={false}
-                      onChange={() => console.log('test')}
+                      checked={selectedBrands.includes(brand)}
+                      onChange={() => handleBrandChange(brand)}
                       color="primary"
                     />
                     <ListItemText primary={brand} />
