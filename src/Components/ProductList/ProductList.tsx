@@ -18,7 +18,6 @@ interface Product {
 const ProductList: React.FC = () => {
 
   const { products }: { products: any } = useSelector((state: any) => state.products);
-
   const { filteredProducts }: { filteredProducts: any } = useSelector((state: any) => state.products);
 
   const { sortFilter }: { sortFilter: any } = useSelector((state: any) => state.products);
@@ -28,66 +27,49 @@ const ProductList: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const filterProductsList = () => {
-    if (!Array.isArray(filteredProducts)) {
-      console.error('filteredProducts is not an array');
-      return;
-    }
+  const filterByPrice = () => {
     let prods = [...filteredProducts];
     if (sortFilter === 'price_asc') {
       prods.sort((a: Product, b: Product) => parseFloat(a.price) - parseFloat(b.price));
     } else if (sortFilter === 'price_desc') {
       prods.sort((a: Product, b: Product) => parseFloat(b.price) - parseFloat(a.price));
     }
-    
+    dispatch(filterProducts(prods));
+  };
+  
+  const applyFilters = () => {
+    if (!products || products.length === 0) return;
+    let prods = [...products.products];
     if (Array.isArray(categoriesFilter) && categoriesFilter.length > 0) {
       prods = prods.filter((product: Product) =>
         categoriesFilter.includes(product.category)
       );
     }
 
-    if (Array.isArray(brandsFilter) && brandsFilter.length > 0) { // Applying brand filter
+    if (Array.isArray(brandsFilter) && brandsFilter.length > 0) {
       prods = prods.filter((product: Product) =>
         brandsFilter.includes(product.brand)
       );
     }
 
-    dispatch(filterProducts(prods));
-  };
-  
-  const filterRangeProductsList = () => {
     const [minPrice, maxPrice] = rangeFilter;
-    let prods = [...filteredProducts];
     if (minPrice !== null && maxPrice !== null) {
       prods = prods.filter((product: Product) => {
         const price = parseFloat(product.price);
         return price >= minPrice && price <= maxPrice;
       });
     }
-    // Apply category filter
-    if (Array.isArray(categoriesFilter) && categoriesFilter.length > 0) {
-      prods = prods.filter((product: Product) =>
-        categoriesFilter.includes(product.category)
-      );
-    }
-
-    if (Array.isArray(brandsFilter) && brandsFilter.length > 0) { // Applying brand filter
-      prods = prods.filter((product: Product) =>
-        brandsFilter.includes(product.brand)
-      );
-    }
-
+    
     dispatch(filterProducts(prods));
   };
   
   useEffect(() => {
-    filterProductsList();
-    console.log(brandsFilter, "RKDKF")
-  }, [sortFilter, categoriesFilter, brandsFilter]);
+    filterByPrice();
+  }, [sortFilter]);
   
   useEffect(() => {
-    filterRangeProductsList();
-  }, [rangeFilter, categoriesFilter, brandsFilter]); // Adding brandFilter to the dependency array
+    applyFilters();
+  }, [products, categoriesFilter, rangeFilter, brandsFilter]);
 
   return (
     <div className="product-list">
@@ -95,7 +77,7 @@ const ProductList: React.FC = () => {
         <CustomSearch />
       </div>
       <div className="row row-cols-1 row-cols-md-3 g-2 p-4">
-        { filteredProducts?.length && filteredProducts?.map(product => (
+        { filteredProducts?.length && filteredProducts?.map((product : Product) => (
           <div key={product.id} className="col mb-4">
             <ProductCard
               name={product.title}

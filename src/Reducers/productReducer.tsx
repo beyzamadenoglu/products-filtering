@@ -16,11 +16,11 @@ const productReducer = (state = initialState, action: any) => {
         products: action.payload,
         filteredProducts: action.payload.products,
       };
-    case FILTER_PRODUCTS:
-      return {
-        ...state,
-        filteredProducts: action.payload,
-      };
+      case FILTER_PRODUCTS:
+        return {
+          ...state,
+          filteredProducts: [...action.payload],
+        };
     case SET_SORT_FILTER:
       return {
         ...state,
