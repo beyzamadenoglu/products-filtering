@@ -1,5 +1,8 @@
 # E-commerce Store with Advanced Filtering
 
+## You can access the live demo of this project here.
+https://products-filtering-beyza.netlify.app/
+
 
 ## Description
 This project is an e-commerce store built using React, TypeScript, Redux, and SCSS. It utilizes advanced filtering options such as multiple criteria, price ranges, sorting, and dynamic updates of product listings to provide a smooth user experience.
@@ -38,6 +41,3 @@ Data for the products is fetched from DummyJSON using Axios. Ensure you have an 
 - Multifiltering: You can apply multiple filters simultaneously to further narrow down the product selection.
 - Clear Filters: To remove applied filters and reset the product listing, use the "Clear Filters" option.
 - Search: Use the search functionality to find products by name.
-
-
-## You can access the live demo of this project here.
