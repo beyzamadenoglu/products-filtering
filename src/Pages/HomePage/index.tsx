@@ -17,8 +17,7 @@ const Home = () => {
       setLoading(true);
       try {
         const data = await getAllProducts();
-        setData(data);
-       dispatch(setProducts(data));
+        dispatch(setProducts(data));
       } catch (error) {
         console.error('Error:', error);
       }
