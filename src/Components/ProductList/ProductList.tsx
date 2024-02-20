@@ -37,7 +37,7 @@ const ProductList: React.FC = () => {
       prods.sort((a: Product, b: Product) => parseFloat(b.price) - parseFloat(a.price));
     }
     dispatch(filterProducts(prods));
-  }, [dispatch, sortFilter]);
+  }, [dispatch, filteredProducts, sortFilter]);
   
   useEffect(() => {
     if (!products || products.length === 0) return;
@@ -71,7 +71,7 @@ const ProductList: React.FC = () => {
     }
   
     dispatch(filterProducts(prods));
-  }, [dispatch, products, categoriesFilter, rangeFilter, brandsFilter]);
+  }, [dispatch, searchTerm, products, categoriesFilter, rangeFilter, brandsFilter]);
 
   useEffect(() => {
     if (searchTerm.trim() !== '') {

@@ -14,19 +14,21 @@ interface Product {
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<Product[]>([]);
   const dispatch = useDispatch();
   
-  useEffect(async () => {
-    setLoading(true);
-    try {
-      const _data = await getAllProducts();
-      setData(_data);
-      dispatch(setProducts(_data));
-    } catch (error) {
-      console.error('Error:', error);
-    }
-    setLoading(false);
+  useEffect( () => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const data = await getAllProducts();
+        setData(data);
+       dispatch(setProducts(data));
+      } catch (error) {
+        console.error('Error:', error);
+      }
+      setLoading(false);
+    };
+    fetchProducts();
   }, []);
 
   return (
