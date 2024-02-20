@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect, useState } from 'react';
 import withLayout from '../../Layouts/Layout.tsx';
 import { useDispatch } from 'react-redux';
