@@ -44,14 +44,12 @@ const ProductList: React.FC = () => {
     
     let prods = [...products.products];
   
-    // Apply search term filter first
     if (searchTerm.trim() !== '') {
       prods = prods.filter((product: Product) =>
         product.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
   
-    // Apply other filters
     if (Array.isArray(categoriesFilter) && categoriesFilter.length > 0) {
       prods = prods.filter((product: Product) =>
         categoriesFilter.includes(product.category)
@@ -85,15 +83,12 @@ const ProductList: React.FC = () => {
   }, [products, categoriesFilter, rangeFilter, brandsFilter]);
 
   useEffect(() => {
-    console.log(searchTerm, "termmm")
     if (searchTerm.trim() !== '') {
       dispatch(clearFilters());
-      console.log(products.products, "termmmimpooo")
       const filtered = products.products.filter((product: Product) =>
         product.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
 
-      console.log(filtered,)
       dispatch(filterProducts(filtered));
     }
   }, [searchTerm, products]);

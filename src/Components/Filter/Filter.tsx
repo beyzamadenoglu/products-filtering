@@ -14,7 +14,7 @@ import Slider from '@mui/material/Slider';
 
 import getCategories from '../../Services/api/categories.tsx';
 import { SortOption, RangeOption } from '../../types.ts';
-import { setSortFilter, setRangeFilter, setCategoriesFilter, setBrandsFilter } from '../../Actions/productActions.tsx';
+import { setSortFilter, setRangeFilter, setCategoriesFilter, setBrandsFilter, clearFilters } from '../../Actions/productActions.tsx';
 
 import { Product } from '../../types.ts';
 
@@ -38,7 +38,9 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
 
+
   const { products }: { products: any } = useSelector((state: any) => state.products);
+
   const dispatch = useDispatch();
 
   const brands = Array.from(new Set(products?.products?.map((product: Product) => product.brand)));
@@ -48,7 +50,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
       const categoriesData = await getCategories();
       setCategories(categoriesData);
     } catch (error) {
-      console.error('Error:', error);
+      
     }
   };
 
@@ -98,6 +100,17 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
     setSelectedBrands(updatedSelectedBrands);
   };
 
+  const handleClearFilters = () => {
+    dispatch(clearFilters());
+    setSelectedCategories([]);
+    setSelectedBrands([]);
+    setValue([0, 1000]); 
+    setPriceSort(undefined);
+  };
+
+  
+  
+
   return (
     <div>
       <Box
@@ -106,8 +119,14 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
         className="filter-sidebar"
       >
         <List>
-          {/* Price */}
           <React.Fragment>
+          <React.Fragment>
+              <ListItem disablePadding>
+                <ListItemButton onClick={handleClearFilters}>
+                  <ListItemText primary="Clear Filters" />
+                </ListItemButton>
+              </ListItem>
+          </React.Fragment>
             <ListItem disablePadding>
               <ListItemButton selected={openPrice} onClick={handlePriceToggle}>
                 <ListItemText primary="Price" />
@@ -135,7 +154,6 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
             </Collapse>
           </React.Fragment>
           <Divider />
-          {/* Price Range */}
           <React.Fragment>
             <ListItem disablePadding>
               <ListItemButton selected={openPriceRange} onClick={handlePriceRangeToggle}>
@@ -156,7 +174,6 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
             </Collapse>
           </React.Fragment>
           <Divider />
-          {/* Category */}
           <React.Fragment>
             <ListItem disablePadding>
               <ListItemButton selected={openCategory} onClick={handleCategoryToggle}>
@@ -180,7 +197,6 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
             </Collapse>
           </React.Fragment>
           <Divider />
-          {/* Brand */}
           <React.Fragment>
             <ListItem disablePadding>
               <ListItemButton selected={openBrand} onClick={handleBrandToggle}>
