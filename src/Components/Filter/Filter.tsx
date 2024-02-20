@@ -33,7 +33,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
   const [openPriceRange, setOpenPriceRange] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
-  const [value, setValue] = useState<number[]>([20, 37]);
+  const [value, setValue] = useState<number[]>([0, 20000]);
   const [priceSort, setPriceSort] = useState<SortOption>();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -104,7 +104,7 @@ const TemporaryDrawer: React.FC<FilterProps> = () => {
     dispatch(clearFilters());
     setSelectedCategories([]);
     setSelectedBrands([]);
-    setValue([0, 1000]); 
+    setValue([0, 2000]); 
     setPriceSort(undefined);
   };
 
