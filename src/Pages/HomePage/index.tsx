@@ -8,10 +8,6 @@ import ProductList from '../../Components/ProductList/ProductList.tsx';
 import LoadingSpinner from '../../Components/Loading/Loading.jsx';
 import { setProducts } from '../../Actions/productActions.tsx'
 
-interface Product {
- products: string[];
-}
-
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -29,7 +25,7 @@ const Home = () => {
       setLoading(false);
     };
     fetchProducts();
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
