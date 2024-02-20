@@ -27,9 +27,9 @@ const ProductList: React.FC = () => {
   const { searchTerm }: { searchTerm: string } = useSelector((state: any) => state.products);
 
 
-  const dispatch = useDispatch();  
-  
-  useEffect(() => {
+  const dispatch = useDispatch();
+
+  const filterByPrice = () => {
     let prods = [...filteredProducts];
     if (sortFilter === 'price_asc') {
       prods.sort((a: Product, b: Product) => parseFloat(a.price) - parseFloat(b.price));
@@ -37,9 +37,9 @@ const ProductList: React.FC = () => {
       prods.sort((a: Product, b: Product) => parseFloat(b.price) - parseFloat(a.price));
     }
     dispatch(filterProducts(prods));
-  }, [dispatch, filteredProducts, sortFilter]);
+  };
   
-  useEffect(() => {
+  const applyFilters = () => {
     if (!products || products.length === 0) return;
     
     let prods = [...products.products];
@@ -71,7 +71,16 @@ const ProductList: React.FC = () => {
     }
   
     dispatch(filterProducts(prods));
-  }, [dispatch, searchTerm, products, categoriesFilter, rangeFilter, brandsFilter]);
+  };
+  
+  
+  useEffect(() => {
+    filterByPrice();
+  }, [sortFilter]);
+  
+  useEffect(() => {
+    applyFilters();
+  }, [products, categoriesFilter, rangeFilter, brandsFilter]);
 
   useEffect(() => {
     if (searchTerm.trim() !== '') {
@@ -82,7 +91,7 @@ const ProductList: React.FC = () => {
 
       dispatch(filterProducts(filtered));
     }
-  }, [dispatch, searchTerm, products]);
+  }, [searchTerm, products]);
 
   return (
     <div className="product-list">
@@ -90,18 +99,25 @@ const ProductList: React.FC = () => {
         <CustomSearch />
       </div>
       <div className="row row-cols-1 row-cols-md-3 g-2 p-4">
-        { filteredProducts?.length && filteredProducts?.map((product : Product) => (
-          <div key={product.id} className="col mb-4">
-            <ProductCard
-              name={product.title}
-              image={product.images[0]}
-              price={product.price}
-            />
+        {filteredProducts?.length ? (
+          filteredProducts.map((product) => (
+            <div key={product.id} className="col mb-4">
+              <ProductCard
+                name={product.title}
+                image={product.images[0]}
+                price={product.price}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="no-data-message">
+            <p>No data available</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
+  
 };
 
-export default ProductList;
+export default ProductList

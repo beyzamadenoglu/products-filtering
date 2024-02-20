@@ -8,26 +8,22 @@ import ProductList from '../../Components/ProductList/ProductList.tsx';
 import LoadingSpinner from '../../Components/Loading/Loading.jsx';
 import { setProducts } from '../../Actions/productActions.tsx'
 
-interface Product {
- products: string[];
-}
-
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const data = await getAllProducts();
+     dispatch(setProducts(data));
+    } catch (error) {
+      console.error('Error:', error);
+    }
+    setLoading(false);
+  };
   
-  useEffect( () => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const data = await getAllProducts();
-        setData(data);
-       dispatch(setProducts(data));
-      } catch (error) {
-        console.error('Error:', error);
-      }
-      setLoading(false);
-    };
+  useEffect(() => {
     fetchProducts();
   }, []);
 
