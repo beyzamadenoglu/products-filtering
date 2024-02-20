@@ -16,23 +16,18 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Product[]>([]);
   const dispatch = useDispatch();
-
-  const fetchProducts = async () => {
+  
+  useEffect(async () => {
     setLoading(true);
     try {
-      const data = await getAllProducts();
-      setData(data);
-     dispatch(setProducts(data));
+      const _data = await getAllProducts();
+      setData(_data);
+      dispatch(setProducts(_data));
     } catch (error) {
       console.error('Error:', error);
     }
     setLoading(false);
-  };
-  
-  useEffect(() => {
-    fetchProducts();
   }, []);
-
 
   return (
     <>

@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Icon } from '@iconify/react';
-
 import { setSearchTerm } from '../../Actions/productActions.tsx';
-
-
 
 import './CustomSearch.scss'
 

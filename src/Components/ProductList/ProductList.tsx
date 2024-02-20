@@ -27,9 +27,9 @@ const ProductList: React.FC = () => {
   const { searchTerm }: { searchTerm: string } = useSelector((state: any) => state.products);
 
 
-  const dispatch = useDispatch();
-
-  const filterByPrice = () => {
+  const dispatch = useDispatch();  
+  
+  useEffect(() => {
     let prods = [...filteredProducts];
     if (sortFilter === 'price_asc') {
       prods.sort((a: Product, b: Product) => parseFloat(a.price) - parseFloat(b.price));
@@ -37,9 +37,9 @@ const ProductList: React.FC = () => {
       prods.sort((a: Product, b: Product) => parseFloat(b.price) - parseFloat(a.price));
     }
     dispatch(filterProducts(prods));
-  };
+  }, [dispatch, sortFilter]);
   
-  const applyFilters = () => {
+  useEffect(() => {
     if (!products || products.length === 0) return;
     
     let prods = [...products.products];
@@ -71,16 +71,7 @@ const ProductList: React.FC = () => {
     }
   
     dispatch(filterProducts(prods));
-  };
-  
-  
-  useEffect(() => {
-    filterByPrice();
-  }, [sortFilter]);
-  
-  useEffect(() => {
-    applyFilters();
-  }, [products, categoriesFilter, rangeFilter, brandsFilter]);
+  }, [dispatch, products, categoriesFilter, rangeFilter, brandsFilter]);
 
   useEffect(() => {
     if (searchTerm.trim() !== '') {
@@ -91,7 +82,7 @@ const ProductList: React.FC = () => {
 
       dispatch(filterProducts(filtered));
     }
-  }, [searchTerm, products]);
+  }, [dispatch, searchTerm, products]);
 
   return (
     <div className="product-list">
