@@ -10,26 +10,27 @@ import { setProducts } from '../../Actions/productActions.tsx'
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
+  
   const dispatch = useDispatch();
 
-  
-  useEffect( () => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const data = await getAllProducts();
-        dispatch(setProducts(data));
-      } catch (error) {
-        console.error('Error:', error);
-      }
-      setLoading(false);
-    };
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const data = await getAllProducts();
+      dispatch(setProducts(data));
+    } catch (error) {
+      console.error('Error:', error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchProducts();
-  }, [dispatch]);
+  }, []);
 
   return (
     <>
-     {loading ? <LoadingSpinner /> : <ProductList />}
+      {loading ? <LoadingSpinner /> : <ProductList />}
     </>
   );
 };
